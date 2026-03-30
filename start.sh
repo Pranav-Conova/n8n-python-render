@@ -19,12 +19,11 @@ NODE_OPTIONS_VALUE="${NODE_OPTIONS:-}"
 if [[ ${#NODE_OPTIONS_VALUE} -ge 2 ]] \
   && [[ ${NODE_OPTIONS_VALUE:0:1} == '"' ]] \
   && [[ ${NODE_OPTIONS_VALUE: -1} == '"' ]]; then
-  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:1:${#NODE_OPTIONS_VALUE}-2}"
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:1:-1}"
 fi
-case " ${NODE_OPTIONS_VALUE} " in
-  *" --dns-result-order=ipv4first "*) ;;
-  *) NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:+${NODE_OPTIONS_VALUE} }--dns-result-order=ipv4first" ;;
-esac
+if [[ ! ${NODE_OPTIONS_VALUE} =~ (^|[[:space:]])--dns-result-order=ipv4first($|[[:space:]]) ]]; then
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:+${NODE_OPTIONS_VALUE} }--dns-result-order=ipv4first"
+fi
 export NODE_OPTIONS="${NODE_OPTIONS_VALUE}"
 
 # Backward compatibility: map legacy SSL env var name to n8n's expected one.
