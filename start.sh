@@ -16,9 +16,10 @@ export N8N_SECURE_COOKIE="${N8N_SECURE_COOKIE:-false}"
 
 # Some providers return IPv6 first; prefer IPv4 to avoid ENETUNREACH in IPv4-only networks.
 NODE_OPTIONS_VALUE="${NODE_OPTIONS:-}"
-if [[ ${NODE_OPTIONS_VALUE} == \"*\" ]]; then
-  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE#\"}"
-  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE%\"}"
+if [[ ${#NODE_OPTIONS_VALUE} -ge 2 ]] \
+  && [[ ${NODE_OPTIONS_VALUE:0:1} == '"' ]] \
+  && [[ ${NODE_OPTIONS_VALUE: -1} == '"' ]]; then
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:1:${#NODE_OPTIONS_VALUE}-2}"
 fi
 case " ${NODE_OPTIONS_VALUE} " in
   *" --dns-result-order=ipv4first "*) ;;
