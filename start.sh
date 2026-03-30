@@ -16,13 +16,14 @@ export N8N_SECURE_COOKIE="${N8N_SECURE_COOKIE:-false}"
 
 # Some providers return IPv6 first; prefer IPv4 to avoid ENETUNREACH in IPv4-only networks.
 NODE_OPTIONS_VALUE="${NODE_OPTIONS:-}"
-if [[ "${NODE_OPTIONS_VALUE}" == \"*\" ]]; then
+if [[ ${NODE_OPTIONS_VALUE} == \"*\" ]]; then
   NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE#\"}"
   NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE%\"}"
 fi
-if [[ " ${NODE_OPTIONS_VALUE} " != *" --dns-result-order=ipv4first "* ]]; then
-  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:+${NODE_OPTIONS_VALUE} }--dns-result-order=ipv4first"
-fi
+case " ${NODE_OPTIONS_VALUE} " in
+  *" --dns-result-order=ipv4first "*) ;;
+  *) NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:+${NODE_OPTIONS_VALUE} }--dns-result-order=ipv4first" ;;
+esac
 export NODE_OPTIONS="${NODE_OPTIONS_VALUE}"
 
 # Backward compatibility: map legacy SSL env var name to n8n's expected one.
