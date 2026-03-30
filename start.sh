@@ -14,6 +14,22 @@ export N8N_LISTEN_ADDRESS="${N8N_LISTEN_ADDRESS:-0.0.0.0}"
 export N8N_PROTOCOL="${N8N_PROTOCOL:-https}"
 export N8N_SECURE_COOKIE="${N8N_SECURE_COOKIE:-false}"
 
+# Some providers return IPv6 first; prefer IPv4 to avoid ENETUNREACH in IPv4-only networks.
+NODE_OPTIONS_VALUE="${NODE_OPTIONS:-}"
+if [[ "${NODE_OPTIONS_VALUE}" == \"*\" ]]; then
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE#\"}"
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE%\"}"
+fi
+if [[ " ${NODE_OPTIONS_VALUE} " != *" --dns-result-order=ipv4first "* ]]; then
+  NODE_OPTIONS_VALUE="${NODE_OPTIONS_VALUE:+${NODE_OPTIONS_VALUE} }--dns-result-order=ipv4first"
+fi
+export NODE_OPTIONS="${NODE_OPTIONS_VALUE}"
+
+# Backward compatibility: map legacy SSL env var name to n8n's expected one.
+if [ -n "${DB_POSTGRESDB_SSL:-}" ] && [ -z "${DB_POSTGRESDB_SSL_ENABLED:-}" ]; then
+  export DB_POSTGRESDB_SSL_ENABLED="${DB_POSTGRESDB_SSL}"
+fi
+
 # If Render provides the public URL, use it so webhook URLs are correct.
 if [ -n "${RENDER_EXTERNAL_URL:-}" ]; then
   export WEBHOOK_URL="${RENDER_EXTERNAL_URL}"

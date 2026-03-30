@@ -30,6 +30,7 @@ The FastAPI sidecar is reachable inside the container at `http://localhost:8000`
 | `N8N_SECURE_COOKIE` | No | `false` | Set to `false` so session cookies work when Render terminates TLS before reaching the container. |
 | `WEBHOOK_URL` | No | auto-detected from `RENDER_EXTERNAL_URL` | Override the base URL used for webhook endpoints. |
 | `N8N_EDITOR_BASE_URL` | No | auto-detected from `RENDER_EXTERNAL_URL` | Override the base URL used for the n8n editor. |
+| `NODE_OPTIONS` | No | `--dns-result-order=ipv4first` | Prefer IPv4 DNS results so Postgres connections don't fail with `ENETUNREACH` on platforms without IPv6 egress. |
 
 ### Persistent storage (recommended)
 
@@ -51,6 +52,9 @@ Provision a Render PostgreSQL database and set:
 | `DB_POSTGRESDB_SSL_ENABLED` | `true` |
 
 See `render.yaml` for a ready-made configuration with a linked database (commented out by default).
+
+> If you previously used `DB_POSTGRESDB_SSL=true`, this image maps it to
+> `DB_POSTGRESDB_SSL_ENABLED` automatically for compatibility.
 
 **Option B – Render Persistent Disk**  
 Attach a [Render Persistent Disk](https://render.com/docs/disks) mounted at `/root/.n8n` to keep the default SQLite database across redeploys without any extra configuration.
