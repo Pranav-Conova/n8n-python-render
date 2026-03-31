@@ -23,13 +23,16 @@ The FastAPI sidecar is reachable inside the container at `http://localhost:8000`
 
 ## Environment variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `N8N_ENCRYPTION_KEY` | **Yes** | — | Strong random string used to encrypt saved credentials. Generate with `openssl rand -hex 32`. |
-| `N8N_PROTOCOL` | No | `https` | Protocol used in generated URLs (`https` for Render). |
-| `N8N_SECURE_COOKIE` | No | `false` | Set to `false` so session cookies work when Render terminates TLS before reaching the container. |
-| `WEBHOOK_URL` | No | auto-detected from `RENDER_EXTERNAL_URL` | Override the base URL used for webhook endpoints. |
-| `N8N_EDITOR_BASE_URL` | No | auto-detected from `RENDER_EXTERNAL_URL` | Override the base URL used for the n8n editor. |
+The included `render.yaml` now defines all required n8n, auth, and PostgreSQL variables for this deployment (including host/port/protocol, webhook/editor URLs, telemetry flags, and Neon Postgres settings).
+
+If you run locally without Render, set at least:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `N8N_ENCRYPTION_KEY` | **Yes** | Credential encryption key used by n8n. |
+| `N8N_HOST` | No | Defaults to `0.0.0.0`. |
+| `N8N_PORT` or `PORT` | No | Defaults to `5678`. |
+| `N8N_PROTOCOL` | No | Defaults to `https`. |
 
 ### Persistent storage (recommended)
 

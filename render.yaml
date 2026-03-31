@@ -4,52 +4,59 @@ services:
     runtime: docker
     healthCheckPath: /healthz
     envVars:
+      # Core n8n config
       - key: N8N_HOST
-        value: 0.0.0.0
-      - key: N8N_LISTEN_ADDRESS
-        value: 0.0.0.0
+        value: n8n-python-render.onrender.com
+      - key: N8N_PORT
+        value: "5678"
       - key: N8N_PROTOCOL
         value: https
-      - key: N8N_SECURE_COOKIE
-        value: "false"
+      - key: N8N_LISTEN_ADDRESS
+        value: 0.0.0.0
+      - key: WEBHOOK_URL
+        value: https://n8n-python-render.onrender.com/
+      - key: N8N_EDITOR_BASE_URL
+        value: https://n8n-python-render.onrender.com
+      - key: N8N_TRUST_PROXY
+        value: "true"
+      # 🔐 IMPORTANT — FIXED KEY (DO NOT CHANGE)
+      - key: N8N_ENCRYPTION_KEY
+        sync: false
+      # ⚙️ Disable telemetry
       - key: N8N_DIAGNOSTICS_ENABLED
         value: "false"
       - key: N8N_VERSION_NOTIFICATIONS_ENABLED
         value: "false"
       - key: N8N_TEMPLATES_ENABLED
         value: "false"
-      # Set a strong random string to encrypt saved credentials.
-      # Generate with: openssl rand -hex 32
-      - key: N8N_ENCRYPTION_KEY
-        generateValue: true
-      # Optional: persist workflows/credentials across redeploys by connecting
-      # a Render PostgreSQL database and setting these variables.
-      # - key: DB_TYPE
-      #   value: postgresdb
-      # - key: DB_POSTGRESDB_HOST
-      #   fromDatabase:
-      #     name: n8n-db
-      #     property: host
-      # - key: DB_POSTGRESDB_PORT
-      #   fromDatabase:
-      #     name: n8n-db
-      #     property: port
-      # - key: DB_POSTGRESDB_DATABASE
-      #   fromDatabase:
-      #     name: n8n-db
-      #     property: database
-      # - key: DB_POSTGRESDB_USER
-      #   fromDatabase:
-      #     name: n8n-db
-      #     property: user
-      # - key: DB_POSTGRESDB_PASSWORD
-      #   fromDatabase:
-      #     name: n8n-db
-      #     property: password
-      # - key: DB_POSTGRESDB_SSL_ENABLED
-      #   value: "true"
-
-# Uncomment to add a managed PostgreSQL database for persistent storage.
-# databases:
-#   - name: n8n-db
-#     plan: starter
+      # 🔐 AUTH (UI login enabled)
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: "false"
+      - key: N8N_DISABLE_UI_LOGIN
+        value: "false"
+      - key: N8N_USER_MANAGEMENT_DISABLED
+        value: "false"
+      # 🗄️ Postgres
+      - key: DB_TYPE
+        value: postgresdb
+      - key: DB_POSTGRESDB_HOST
+        value: ep-autumn-base-a13kmgro.ap-southeast-1.aws.neon.tech
+      - key: DB_POSTGRESDB_PORT
+        value: "5432"
+      - key: DB_POSTGRESDB_DATABASE
+        value: neondb
+      - key: DB_POSTGRESDB_USER
+        value: neondb_owner
+      - key: DB_POSTGRESDB_PASSWORD
+        sync: false
+      - key: DB_POSTGRESDB_SSL
+        value: "true"
+      - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
+      # ⚡ Optional
+      - key: N8N_RUNNERS_ENABLED
+        value: "true"
+      - key: NODE_OPTIONS
+        value: "--dns-result-order=ipv4first"
+      - key: PORT
+        value: "5678"
