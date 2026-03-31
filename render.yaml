@@ -21,7 +21,7 @@ services:
         value: "true"
       # 🔐 IMPORTANT — FIXED KEY (DO NOT CHANGE)
       - key: N8N_ENCRYPTION_KEY
-        sync: false
+        value: c0ef1bcd386b95758a4b6a240567d0b26d563550778323c3421ba5b149a3afcd
       # ⚙️ Disable telemetry
       - key: N8N_DIAGNOSTICS_ENABLED
         value: "false"
@@ -48,7 +48,7 @@ services:
       - key: DB_POSTGRESDB_USER
         value: neondb_owner
       - key: DB_POSTGRESDB_PASSWORD
-        sync: false
+        value: npg_q8rJMeQjn7zx
       - key: DB_POSTGRESDB_SSL
         value: "true"
       - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
