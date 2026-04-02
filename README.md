@@ -25,7 +25,7 @@ The FastAPI sidecar is reachable inside the container at `http://localhost:8000`
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `N8N_ENCRYPTION_KEY` | **Yes** | — | Strong random string used to encrypt saved credentials. Generate with `openssl rand -hex 32`. |
+| `N8N_ENCRYPTION_KEY` | **Yes** | — | Strong random string used to encrypt saved credentials. Generate with `openssl rand -hex 32`. **Must remain the same across all restarts and redeploys** — changing it makes existing credentials unreadable (login fails). |
 | `N8N_PROTOCOL` | No | `https` | Protocol used in generated URLs (`https` for Render). |
 | `N8N_SECURE_COOKIE` | No | `false` | Set to `false` so session cookies work when Render terminates TLS before reaching the container. |
 | `WEBHOOK_URL` | No | auto-detected from `RENDER_EXTERNAL_URL` | Override the base URL used for webhook endpoints. |
@@ -53,7 +53,7 @@ Provision a Render PostgreSQL database and set:
 See `render.yaml` for a ready-made configuration with a linked database (commented out by default).
 
 **Option B – Render Persistent Disk**  
-Attach a [Render Persistent Disk](https://render.com/docs/disks) mounted at `/root/.n8n` to keep the default SQLite database across redeploys without any extra configuration.
+Attach a [Render Persistent Disk](https://render.com/docs/disks) mounted at `/home/node/.n8n` to keep the default SQLite database across redeploys without any extra configuration. The `render.yaml` blueprint in this repo already includes this disk definition (requires a paid Render instance type).
 
 ## FastAPI sidecar (`/run` endpoint)
 
@@ -87,7 +87,10 @@ docker build -t n8n-python-render .
 docker run --rm -p 5678:5678 -p 8000:8000 \
   -e N8N_ENCRYPTION_KEY=changeme \
   -e N8N_SECURE_COOKIE=false \
+  -v n8n_data:/home/node/.n8n \
   n8n-python-render
 ```
+
+> **Note:** The `-v n8n_data:/home/node/.n8n` mount persists n8n data (credentials, workflows) between `docker run` invocations. Replace `changeme` with a real secret generated via `openssl rand -hex 32`, and use the same `N8N_ENCRYPTION_KEY` value every time — changing it makes stored credentials unreadable.
 
 Open <http://localhost:5678> to access n8n.
