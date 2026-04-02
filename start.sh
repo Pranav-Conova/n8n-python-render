@@ -14,6 +14,18 @@ export N8N_LISTEN_ADDRESS="${N8N_LISTEN_ADDRESS:-0.0.0.0}"
 export N8N_PROTOCOL="${N8N_PROTOCOL:-https}"
 export N8N_SECURE_COOKIE="${N8N_SECURE_COOKIE:-false}"
 
+# N8N_ENCRYPTION_KEY must be a stable, operator-supplied secret.
+# n8n uses this key to encrypt/decrypt saved credentials; if it changes
+# between restarts all stored credentials become unreadable, causing
+# "Wrong username or password" errors on login.
+if [ -z "${N8N_ENCRYPTION_KEY:-}" ]; then
+  echo "ERROR: N8N_ENCRYPTION_KEY is not set. Set a fixed random secret in your" >&2
+  echo "       deployment environment and never change it after first deploy." >&2
+  echo "       Generate one with: openssl rand -hex 32" >&2
+  exit 1
+fi
+export N8N_ENCRYPTION_KEY
+
 # If Render provides the public URL, use it so webhook URLs are correct.
 if [ -n "${RENDER_EXTERNAL_URL:-}" ]; then
   export WEBHOOK_URL="${RENDER_EXTERNAL_URL}"

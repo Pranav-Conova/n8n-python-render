@@ -3,6 +3,13 @@ services:
     name: n8n-python-render
     runtime: docker
     healthCheckPath: /healthz
+    # Persistent disk so SQLite data and credentials survive redeploys.
+    # Render free-tier does not include persistent disks; upgrade to a paid
+    # instance type or switch to PostgreSQL (see commented-out vars below).
+    disk:
+      name: n8n-data
+      mountPath: /home/node/.n8n
+      sizeGB: 1
     envVars:
       - key: N8N_HOST
         value: 0.0.0.0
@@ -18,10 +25,14 @@ services:
         value: "false"
       - key: N8N_TEMPLATES_ENABLED
         value: "false"
-      # Set a strong random string to encrypt saved credentials.
+      # REQUIRED: Set a strong, fixed random string to encrypt saved credentials.
       # Generate with: openssl rand -hex 32
+      # IMPORTANT: Never change this value after first deploy — changing it will
+      # make all existing credentials unreadable (causing login failures).
+      # Set this once in the Render dashboard; it is intentionally not
+      # auto-generated so that it remains stable across redeploys.
       - key: N8N_ENCRYPTION_KEY
-        generateValue: true
+        sync: false
       # Optional: persist workflows/credentials across redeploys by connecting
       # a Render PostgreSQL database and setting these variables.
       # - key: DB_TYPE
